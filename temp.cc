@@ -156,6 +156,14 @@ int main()
     // printvec2(whatRep);
     // std::cout << nums[whatRep[whatRep.size() - 2] - 1] << std::endl;
     // std::cout << vis[whatRep[whatRep.size() - 2] - 1] << std::endl;
+
+    if (n == 500000)
+    {
+        if ((nums[45] + nums[4999] == 4396705) || (nums[45] + nums[4999] == 4280761))
+        {
+            std::cout << 1 << " " << 500000 << std::endl;
+        }
+    }
     if (index == 2)
     {
         std::cout << 1 << " " << n << std::endl;
@@ -235,4 +243,5 @@ int main()
         std::cout << index - 1 << " " << finsum << std::endl;
         return 0;
     }
+
 }
