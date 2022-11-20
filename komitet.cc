@@ -8,9 +8,12 @@
 #define MAX 1000000007
 
 uint32_t caterpillar(uint32_t dp[],
-                   uint32_t pc,
-                   uint32_t kc)
+                     uint32_t pc,
+                     uint32_t kc)
 {
+    if(pc>kc) {
+        return 0;
+    }
     static uint32_t p = 0, k = 0, sum = 0;
     uint32_t idx = k;
     while (idx < kc)
@@ -115,26 +118,28 @@ int main()
     uint32_t c = 0;
     c = vis[c] + 1;
     whatRep.push_back(c);
-    while (c < n - 1)
+    while (c < n )
     {
         c = vis[c - 1] + 1;
-        c = vis[c] + 1;
+        c = std::min(n, vis[c] + 1);
         whatRep.push_back(c);
     }
-    if(whatRep[whatRep.size() - 1] != n) {
+    if (whatRep[whatRep.size() - 1] != n)
+    {
         whatRep.push_back(n);
     }
     // printvec2(whatRep);
     // std::cout << nums[whatRep[whatRep.size() - 2] - 1] << std::endl;
     // std::cout << vis[whatRep[whatRep.size() - 2] - 1] << std::endl;
-    if (whatRep.size() == 2) {
+    if (whatRep.size() == 2)
+    {
         std::cout << 1 << " " << n << std::endl;
         return 0;
     }
-    if (vis[whatRep[whatRep.size() - 2] - 1] == n - 1)
-    {
-        whatRep.pop_back();
-    }
+    // if (vis[whatRep[whatRep.size() - 2] - 1] == n - 1)
+    // {
+    //     whatRep.pop_back();
+    // }
     // printvec(vis, n);
     // printvec2(whatRep);
 
@@ -166,12 +171,12 @@ int main()
                              j,
                              l),
                          whatRep[i]));
-            //  std::cout << "---------" << std::endl;       
+            // std::cout << "---------" << std::endl;
         }
     }
     // printvec(dp, n);
     uint32_t finsum = 0;
-    for (uint32_t j = whatRep[whatRep.size() - 1] - 1; j >= 0; j--)
+    for (uint32_t j = whatRep[whatRep.size() - 2] - 1; j >= 0; j--)
     {
         if (vis[j] != n - 1)
         {
@@ -180,5 +185,23 @@ int main()
         finsum += dp[j];
         finsum %= MAX;
     }
-    std::cout << whatRep.size() - 1 << " " << finsum << std::endl;
+    if (finsum != 0)
+    {
+        std::cout << whatRep.size() - 2 << " " << finsum << std::endl;
+        return 0;
+    }
+    else
+    {
+        for (uint32_t j = whatRep[whatRep.size() - 1] - 1; j >= 0; j--)
+        {
+            if (vis[j] != n - 1)
+            {
+                break;
+            }
+            finsum += dp[j];
+            finsum %= MAX;
+        }
+        std::cout << whatRep.size() - 1 << " " << finsum << std::endl;
+        return 0;
+    }
 }
