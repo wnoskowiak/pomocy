@@ -7,7 +7,13 @@
 
 #define MAX 1000000007
 
-uint64_t modulo (uint64_t a){
+uint64_t modulo2(size_t a)
+{
+    return (a + MAX) % MAX;
+}
+
+uint64_t modulo(uint64_t a)
+{
     return (a + MAX) % MAX;
 }
 
@@ -24,27 +30,27 @@ uint64_t caterpillar(uint64_t dp[],
     while (idx < kc)
     {
         sum += dp[idx];
-        // sum = modulo(sum);
+        sum = modulo(sum);
         idx++;
     }
     idx = p;
     while (idx < pc)
     {
         sum -= dp[idx];
-        // sum = modulo(sum);
+        sum = modulo(sum);
         idx++;
     }
     p = pc;
     k = kc;
-    sum = modulo(sum);
+    // sum = modulo(sum);
     return sum;
 }
 
-uint64_t cutoff(std::vector<uint64_t> nums, uint64_t neew, uint64_t l)
+uint64_t cutoff(uint nums[], uint neew, uint64_t l)
 {
     // potencjalny seq fault
     static uint64_t current = 0;
-    if ((int)nums[neew] - (int)l < 0)
+    if (nums[neew] < l)
     {
         return current;
     }
@@ -77,23 +83,14 @@ uint64_t horizon2(uint64_t vis[], uint64_t neew)
     return current;
 }
 
-// void printvec(uint64_t r[], uint64_t n)
-// {
-//     for (uint64_t i = 0; i < n; i++)
-//     {
-//         std::cout << r[i] << " ";
-//     }
-//     std::cout << std::endl;
-// }
-
-// void printvec2(std::vector<uint64_t> r)
-// {
-//     for (uint64_t i = 0; i < r.size(); i++)
-//     {
-//         std::cout << r[i] << " ";
-//     }
-//     std::cout << std::endl;
-// }
+void printvec(uint64_t r[], uint64_t n)
+{
+    for (uint64_t i = 0; i < n; i++)
+    {
+        std::cout << r[i] << " ";
+    }
+    std::cout << std::endl;
+}
 
 int main()
 {
@@ -103,13 +100,31 @@ int main()
     std::cin >> n;
     std::cin >> k;
     std::cin >> l;
-    std::vector<uint64_t> nums(n);
+    uint nums[n];
     uint64_t whatRep[n];
+    uint maxi, mini;
+    bool Nieinne = true;
     for (uint64_t i = 0; i < n; i++)
     {
         std::cin >> nums[i];
+        if(i == 0){
+            maxi =  nums[i];
+            mini =  nums[i];
+        }
+
+        if (Nieinne && i > 0)
+        {
+            maxi = std::max(maxi, nums[i]);
+            mini = std::max(mini, nums[i]);
+            Nieinne = (maxi  - mini >= k -1 );
+        }
     }
-    std::sort(nums.begin(), nums.end());
+    if (Nieinne)
+    {
+        std::cout << 1 << " " << n << std::endl;
+        return 0;
+    }
+    std::sort(nums, nums + (sizeof(nums) / sizeof(nums[0])));
     uint64_t a = 0, vis[n];
     for (uint64_t i = 0; i < n; i++)
     {
@@ -147,14 +162,17 @@ int main()
         whatRep[index] = n;
         index++;
     }
-    // printvec2(whatRep);
+    // printvec(whatRep, n);
     // std::cout << nums[whatRep[whatRep.size() - 2] - 1] << std::endl;
     // std::cout << vis[whatRep[whatRep.size() - 2] - 1] << std::endl;
+
     if (index == 2)
     {
         std::cout << 1 << " " << n << std::endl;
         return 0;
     }
+
+    printvec(whatRep, n);
     // if (vis[whatRep[whatRep.size() - 2] - 1] == n - 1)
     // {
     //     whatRep.pop_back();
@@ -166,7 +184,7 @@ int main()
 
     uint64_t dp[whatRep[index - 1]];
 
-    // printvec(whatRep, n);
+    
 
     for (uint64_t i = 0; i < whatRep[1]; i++)
     {
@@ -184,16 +202,16 @@ int main()
             // std::cout << "max hor2 " << std::max(horizon2(vis, horizon(vis, j) - 1), whatRep[i - 1]) << std::endl;
 
             dp[j] = modulo(caterpillar(
-                        dp,
-                        std::max(horizon2(
-                                     vis,
-                                     horizon(vis, j) - 1),
-                                 whatRep[i - 1]),
-                        std::min(cutoff(
-                                     nums,
-                                     j,
-                                     l),
-                                 whatRep[i])));
+                dp,
+                std::max(horizon2(
+                             vis,
+                             horizon(vis, j) - 1),
+                         whatRep[i - 1]),
+                std::min(cutoff(
+                             nums,
+                             j,
+                             l),
+                         whatRep[i])));
             // std::cout << "---------" << std::endl;
         }
     }
@@ -208,7 +226,8 @@ int main()
         finsum += dp[j];
         finsum = modulo(finsum);
     }
-    if (!finsum)
+
+    if (finsum)
     {
         std::cout << index - 2 << " " << finsum << std::endl;
         return 0;
@@ -222,8 +241,9 @@ int main()
                 break;
             }
             finsum += dp[j];
-            finsum %= MAX;
+            finsum = modulo(finsum);
         }
+
         std::cout << index - 1 << " " << finsum << std::endl;
         return 0;
     }
