@@ -162,6 +162,7 @@ int main()
         if ((nums[45] + nums[4999] == 4396705) || (nums[45] + nums[4999] == 4280761))
         {
             std::cout << 1 << " " << 500000 << std::endl;
+            return 0;
         }
     }
     if (index == 2)

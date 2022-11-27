@@ -48,7 +48,6 @@ uint64_t caterpillar(uint64_t dp[],
 
 uint64_t cutoff(uint nums[], uint neew, uint64_t l)
 {
-    // potencjalny seq fault
     static uint64_t current = 0;
     if (nums[neew] < l)
     {
@@ -63,7 +62,6 @@ uint64_t cutoff(uint nums[], uint neew, uint64_t l)
 
 uint64_t horizon(uint64_t vis[], uint64_t neew)
 {
-    // potencjalny seq fault
     static uint64_t current = 0;
     while (vis[current] < neew)
     {
@@ -74,7 +72,6 @@ uint64_t horizon(uint64_t vis[], uint64_t neew)
 
 uint64_t horizon2(uint64_t vis[], uint64_t neew)
 {
-    // potencjalny seq fault
     static uint64_t current = 0;
     while (vis[current] < neew)
     {
@@ -82,24 +79,6 @@ uint64_t horizon2(uint64_t vis[], uint64_t neew)
     }
     return current;
 }
-
-// void printvec(uint64_t r[], uint64_t n)
-// {
-//     for (uint64_t i = 0; i < n; i++)
-//     {
-//         std::cout << r[i] << " ";
-//     }
-//     std::cout << std::endl;
-// }
-
-// void printvec2(std::vector<uint64_t> r)
-// {
-//     for (uint64_t i = 0; i < r.size(); i++)
-//     {
-//         std::cout << r[i] << " ";
-//     }
-//     std::cout << std::endl;
-// }
 
 int main()
 {
@@ -125,7 +104,11 @@ int main()
         }
         vis[i] = a - 1;
     }
-    bool temp = false;
+
+    if(vis[0]==(n-1)) {
+        std::cout << 1 << " " << n << std::endl;
+        return;
+    }
 
     uint64_t index = 0;
 
@@ -153,26 +136,13 @@ int main()
         whatRep[index] = n;
         index++;
     }
-    // printvec2(whatRep);
-    // std::cout << nums[whatRep[whatRep.size() - 2] - 1] << std::endl;
-    // std::cout << vis[whatRep[whatRep.size() - 2] - 1] << std::endl;
     if (index == 2)
     {
         std::cout << 1 << " " << n << std::endl;
         return 0;
     }
-    // if (vis[whatRep[whatRep.size() - 2] - 1] == n - 1)
-    // {
-    //     whatRep.pop_back();
-    // }
-    // std::cout << "visibility\n";
-    // printvec(vis, n);
-    // std::cout<<"slices\n";
-    // printvec2(whatRep);
 
     uint64_t dp[whatRep[index - 1]];
-
-    // printvec(whatRep, n);
 
     for (uint64_t i = 0; i < whatRep[1]; i++)
     {
@@ -182,13 +152,6 @@ int main()
     {
         for (uint64_t j = whatRep[i]; j < whatRep[i + 1]; j++)
         {
-
-            // std::cout << "current " << nums[j] << std::endl;
-            // std::cout << "cutoff " << std::min(cutoff(nums, j, l), whatRep[i]) << std::endl;
-            // std::cout << "hor1 " << horizon(vis, j) << std::endl;
-            // std::cout << "hor2 " << horizon2(vis, horizon(vis, j) - 1) << std::endl;
-            // std::cout << "max hor2 " << std::max(horizon2(vis, horizon(vis, j) - 1), whatRep[i - 1]) << std::endl;
-
             dp[j] = modulo(caterpillar(
                 dp,
                 std::max(horizon2(
@@ -200,10 +163,8 @@ int main()
                              j,
                              l),
                          whatRep[i])));
-            // std::cout << "---------" << std::endl;
         }
     }
-    // printvec(dp, n);
     uint64_t finsum = 0;
     for (uint64_t j = whatRep[index - 2] - 1; j >= 0; j--)
     {
