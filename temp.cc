@@ -1,248 +1,194 @@
 #include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_set>
-#include <cmath>
-#include <algorithm>
+#include<memory>
 
-#define MAX 1000000007
+class Node{
+public:
+    int val;
+    int number_of_copies;
+    int number_of_left;
+    int height = 1;
 
-uint64_t modulo2(size_t a)
-{
-    return (a + MAX) % MAX;
-}
+    Node* left;
+    Node* right;
 
-uint64_t modulo(uint64_t a)
-{
-    return (a + MAX) % MAX;
-}
+    Node(int _val, int k, int _n_of_l):
+            val(_val), number_of_copies(k), number_of_left(_n_of_l), left(nullptr), right(nullptr)
+    {};
 
-uint64_t caterpillar(uint64_t dp[],
-                     uint64_t pc,
-                     uint64_t kc)
-{
-    if (pc > kc)
-    {
-        return 0;
+    static int get_height(Node *node) {
+        if (!node) return 0;
+        return node->height;
     }
-    static uint64_t p = 0, k = 0, sum = 0;
-    uint64_t idx = k;
-    while (idx < kc)
+
+    static int getBalance(Node *node)
     {
-        sum += dp[idx];
-        sum = modulo(sum);
-        idx++;
-    }
-    idx = p;
-    while (idx < pc)
-    {
-        sum -= dp[idx];
-        sum = modulo(sum);
-        idx++;
-    }
-    p = pc;
-    k = kc;
-    sum = modulo(sum);
-    return sum;
-}
-
-uint64_t cutoff(uint nums[], uint neew, uint64_t l)
-{
-    // potencjalny seq fault
-    static uint64_t current = 0;
-    if (nums[neew] < l)
-    {
-        return current;
-    }
-    while (nums[current] <= nums[neew] - l)
-    {
-        current++;
-    }
-    return current;
-}
-
-uint64_t horizon(uint64_t vis[], uint64_t neew)
-{
-    // potencjalny seq fault
-    static uint64_t current = 0;
-    while (vis[current] < neew)
-    {
-        current++;
-    }
-    return current;
-}
-
-uint64_t horizon2(uint64_t vis[], uint64_t neew)
-{
-    // potencjalny seq fault
-    static uint64_t current = 0;
-    while (vis[current] < neew)
-    {
-        current++;
-    }
-    return current;
-}
-
-// void printvec(uint64_t r[], uint64_t n)
-// {
-//     for (uint64_t i = 0; i < n; i++)
-//     {
-//         std::cout << r[i] << " ";
-//     }
-//     std::cout << std::endl;
-// }
-
-// void printvec2(std::vector<uint64_t> r)
-// {
-//     for (uint64_t i = 0; i < r.size(); i++)
-//     {
-//         std::cout << r[i] << " ";
-//     }
-//     std::cout << std::endl;
-// }
-
-int main()
-{
-    std::ios_base::sync_with_stdio(false);
-    std::cin.tie(NULL);
-    uint64_t n, k, l;
-    std::cin >> n;
-    std::cin >> k;
-    std::cin >> l;
-    uint nums[n];
-    uint64_t whatRep[n];
-    for (uint64_t i = 0; i < n; i++)
-    {
-        std::cin >> nums[i];
-    }
-    std::sort(nums, nums + (sizeof(nums) / sizeof(nums[0])));
-    uint64_t a = 0, vis[n];
-    for (uint64_t i = 0; i < n; i++)
-    {
-        while ((a <= n) && (nums[a] - nums[i] <= k))
-        {
-            a++;
-        }
-        vis[i] = a - 1;
-    }
-    bool temp = false;
-
-    uint64_t index = 0;
-
-    whatRep[index] = 0;
-    index++;
-
-    uint64_t c = 0;
-    c = vis[c] + 1;
-
-    whatRep[index] = c;
-    index++;
-
-    while (c < n)
-    {
-        c = vis[c - 1] + 1;
-        if (c < n)
-        {
-            c = std::min(n, vis[c] + 1);
-        }
-        whatRep[index] = c;
-        index++;
-    }
-    if (whatRep[index - 1] != n)
-    {
-        whatRep[index] = n;
-        index++;
-    }
-    // printvec2(whatRep);
-    // std::cout << nums[whatRep[whatRep.size() - 2] - 1] << std::endl;
-    // std::cout << vis[whatRep[whatRep.size() - 2] - 1] << std::endl;
-
-    if (n == 500000)
-    {
-        if ((nums[45] + nums[4999] == 4396705) || (nums[45] + nums[4999] == 4280761))
-        {
-            std::cout << 1 << " " << 500000 << std::endl;
+        if (!node)
             return 0;
-        }
-    }
-    if (index == 2)
-    {
-        std::cout << 1 << " " << n << std::endl;
-        return 0;
-    }
-    // if (vis[whatRep[whatRep.size() - 2] - 1] == n - 1)
-    // {
-    //     whatRep.pop_back();
-    // }
-    // std::cout << "visibility\n";
-    // printvec(vis, n);
-    // std::cout<<"slices\n";
-    // printvec2(whatRep);
-
-    uint64_t dp[whatRep[index - 1]];
-
-    // printvec(whatRep, n);
-
-    for (uint64_t i = 0; i < whatRep[1]; i++)
-    {
-        dp[i] = 1;
-    }
-    for (uint64_t i = 1; i < index - 1; i++)
-    {
-        for (uint64_t j = whatRep[i]; j < whatRep[i + 1]; j++)
-        {
-
-            // std::cout << "current " << nums[j] << std::endl;
-            // std::cout << "cutoff " << std::min(cutoff(nums, j, l), whatRep[i]) << std::endl;
-            // std::cout << "hor1 " << horizon(vis, j) << std::endl;
-            // std::cout << "hor2 " << horizon2(vis, horizon(vis, j) - 1) << std::endl;
-            // std::cout << "max hor2 " << std::max(horizon2(vis, horizon(vis, j) - 1), whatRep[i - 1]) << std::endl;
-
-            dp[j] = modulo(caterpillar(
-                dp,
-                std::max(horizon2(
-                             vis,
-                             horizon(vis, j) - 1),
-                         whatRep[i - 1]),
-                std::min(cutoff(
-                             nums,
-                             j,
-                             l),
-                         whatRep[i])));
-            // std::cout << "---------" << std::endl;
-        }
-    }
-    // printvec(dp, n);
-    uint64_t finsum = 0;
-    for (uint64_t j = whatRep[index - 2] - 1; j >= 0; j--)
-    {
-        if (vis[j] != n - 1)
-        {
-            break;
-        }
-        finsum += dp[j];
-        finsum = modulo(finsum);
+        return (get_height(node->left) - get_height(node->right));
     }
 
-    if (finsum != 0)
-    {
-        std::cout << index - 2 << " " << finsum << std::endl;
-        return 0;
+    static Node* rotate_left(Node *root) {
+        if (!root) return root;
+        if (!root->right) return root;
+        Node *right = root->right;
+
+        root->right = right->left;
+        right->left = root;
+
+        // Update heights
+        root->height = std::max(get_height(root->left),
+                                get_height(root->right)) + 1;
+        right->height = std::max(get_height(right->left),
+                                 get_height(right->right)) + 1;
+
+        right->number_of_left += root->number_of_copies + root->number_of_left;
+
+        return right;
     }
-    else
-    {
-        for (uint64_t j = whatRep[index - 1] - 1; j >= 0; j--)
-        {
-            if (vis[j] != n - 1)
-            {
-                break;
+
+    static Node* rotate_right(Node *root) {
+        if (!root) return root;
+        if (!root->left) return root;
+
+        Node* left = root->left;
+
+        // Perform rotation
+        root->left = left->right;
+        left->right = root;
+
+        // Update heights
+        root->height = std::max(get_height(root->left),
+                                get_height(root->right)) + 1;
+        left->height = std::max(get_height(left->left),
+                                get_height(left->right)) + 1;
+
+        root->number_of_left -= left->number_of_copies + left->number_of_left;
+
+        // Return new root
+        return left;
+    }
+
+    Node* insert (int value, int count, int position){
+        Node *res = this;
+
+        if (position <= this->number_of_left){
+            res->number_of_left += count;
+
+            if(res->left)
+                res->left = res->left->insert (value, count, position);
+            else {
+                res->left = new Node(value, count, 0);
             }
-            finsum += dp[j];
-            finsum = modulo(finsum);
+
+            res->height = std::max(get_height(res->left),
+                                    get_height(res->right)) + 1;
+        }
+        else if (res->number_of_left < position && position < res->number_of_left + res->number_of_copies){
+            int how_much_left = position - res->number_of_left;
+            int how_much_right = number_of_copies - how_much_left;
+            int old_value = res->val;
+            int old_index = res->number_of_left;
+
+            res->number_of_copies = count;
+            res->val = value;
+
+
+            if (res->right)
+                res->right = res->right->insert(old_value, how_much_right, 0);
+            else
+                res->right = new Node(old_value, how_much_right, 0);
+
+            if (res->left)
+                res = res->insert(old_value, how_much_left, old_index);
+            else {
+                res->left = new Node(old_value, how_much_left, 0);
+                res->number_of_left += how_much_left;
+            }
+        }
+        else if (position >= res->number_of_left + res->number_of_copies){
+            if (res->right)
+                res->right = res->right->insert(value, count, position - res->number_of_left - res->number_of_copies);
+            else {
+                res = res;
+                res->right = new Node(value, count, 0);
+            }
+
+            res->height = std::max(get_height(res->left),
+                                    get_height(res->right)) + 1;
         }
 
-        std::cout << index - 1 << " " << finsum << std::endl;
-        return 0;
+        int balance = getBalance(res);
+
+        if (balance > 1) {
+            res = rotate_right(res);
+        } else if (balance < 0) {
+            res = rotate_left(res);
+        }
+//        //insert into res.left.left
+//        if (balance > 1 && Node::getBalance(res->left) >= 0) {
+//            res = Node::rotate_right(res);
+//        } else if (balance > 1 && Node::getBalance(res->left) < 0) {
+//            res->left = Node::rotate_left(res->left);
+//            res = Node::rotate_right(res);
+//        } else if (Node::getBalance(res) < 0 && Node::getBalance(res->right) > 0) {
+//            res->right = Node::rotate_right(res->right);
+//            res = Node::rotate_left(res);
+//        } else if (balance < 0 && Node::getBalance(res->right) <= 0) {
+//            res = Node::rotate_left(res);
+//        }
+
+        return res;
     }
 
+    int get (int position){
+        if (position < this->number_of_left) return this->left->get(position);
+        if (position >= this->number_of_left && position < this->number_of_left + this->number_of_copies){
+            return this->val;
+        }
+        else return this->right->get(position - this->number_of_left - this->number_of_copies);
+    }
+};
+
+int main() {
+    std::ios_base::sync_with_stdio(false);
+
+    std::cin.tie(NULL);
+
+    int last_get = 0;
+    int length = 0;
+    int how_much_operation;
+    Node* node = NULL;
+    char operation;
+    int value, count, position;
+
+    std::cin >> how_much_operation;
+
+    for (int i = 0; i < how_much_operation; i++){
+        std::cin >> operation;
+
+        //std::cout<< operation <<std::endl;
+        if (operation == 'g'){
+            // std::cout << "position" <<std::endl;
+            std::cin >> position;
+            position = (position + last_get) % length;
+            last_get = node->get(position);
+            std::cout << last_get << "\n";
+        }
+        else {
+            std::cin >> position;
+            std::cin >> value;
+            std::cin >> count;
+
+            if (!node){
+                node = new Node(value, count, 0);
+                length += count;
+            }
+            else {
+                position = (position + last_get) % (length + 1);
+                node = node->insert(value, count, position);
+                length += count;
+            }
+        }
+    }
+    return 0;
 }
